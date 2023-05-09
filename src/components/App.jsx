@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
@@ -7,41 +7,37 @@ import { fetchImg } from './ApiService/ApiService';
 import { Loader } from './Loader/Loader';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
-
+import css from './App.module.css';
 
 export class App extends Component {
   state = {
-    searchQuery: "",
+    searchQuery: '',
     images: [],
-    totalImg: "",
+    totalImg: '',
     page: null,
     isLoading: false,
     showModal: false,
     modalImg: null,
-    error: false,
-  }
+    error: null,
+  };
 
- async componentDidUpdate(_, prevState) {
+  componentDidUpdate(_, prevState) {
     const prevQuery = prevState.searchQuery;
     const nextQuery = this.state.searchQuery;
     const prevPage = prevState.page;
     const nextPage = this.state.page;
 
-   if (prevQuery !== nextQuery || prevPage !== nextPage) {
-     try {
-       this.setState({ isLoading: true });
-       const { data } = await fetchImg(nextQuery, nextPage);
-      
-       this.setState(({ images }) => ({
-         images: [...images, ...data.hits],
-         totalImg: data.totalHits,
-         
-       }))
-     } catch (error) {
-       alert('something went wrong :( Please enter a valid request');
-      } finally {
-        this.setState({ isLoading: false });
-      }
+    if (prevQuery !== nextQuery || prevPage !== nextPage) {
+      this.setState({ isLoading: true });
+      fetchImg(nextQuery, nextPage)
+        .then(data =>
+          this.setState(({ images }) => ({
+            images: [...images, ...data.hits],
+            totalImg: data.totalHits,
+            isLoading: false,
+          }))
+        )
+        .catch(error => this.setState({ error }));
     }
   }
 
@@ -49,28 +45,29 @@ export class App extends Component {
     this.setState({ searchQuery: query, page: 1, images: [] });
   };
 
-    changePage = () => {
-    this.setState(prev => ({ page: prev.page + 1 }));
+  incrementPage = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   setModalImg = imgUrl => {
     this.setState({ modalImg: imgUrl });
   };
 
-    toggleModal = () => {
+  toggleModal = () => {
     this.setState(({ showModal }) => ({ showModal: !showModal }));
   };
 
   render() {
-      const { searchQuery, images, isLoading, totalImg, showModal, modalImg } =
+    const { images, isLoading, totalImg, showModal, modalImg, error } =
       this.state;
     const showMoreButton = totalImg > images.length;
-    const errorRequest = totalImg === 0;
+
     return (
-      <div className='App'>
+      <div className={css.App}>
         <Searchbar onSubmit={this.handleSubmit} />
         {images.length > 0 && (
-          
           <ImageGallery>
             {images.map(image => (
               <ImageGalleryItem
@@ -82,23 +79,16 @@ export class App extends Component {
             ))}
           </ImageGallery>
         )}
-          
-{isLoading && <Loader />}
-        {showMoreButton && <Button onClick={this.changePage} />}
+
+        {isLoading && <Loader />}
+        {showMoreButton && <Button incrementPage={this.incrementPage} />}
         {showModal && (
           <Modal onClose={this.toggleModal}>
             <img src={modalImg} alt="#" />
           </Modal>
         )}
-        {errorRequest && (
-          `No results found for ${searchQuery}`
-        )}
-
+        {error && <h2>No results found</h2>}
       </div>
-    )
+    );
   }
-      
-    
-  
-
 }

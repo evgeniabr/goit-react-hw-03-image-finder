@@ -1,14 +1,15 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
+import css from './Button.module.css';
 
-export  function Button({onClick}) {
+export function Button({ incrementPage }) {
   return (
-   <Button className="Button" type="button" onClick={onClick}>
+    <button className={css.Button} type="button" onClick={incrementPage}>
       Load more
-    </Button>
+    </button>
   );
-};
+}
 
- Button.propTypes = {
-  onClick: PropTypes.func.isRequired,
- };
+Button.propTypes = {
+  incrementPage: PropTypes.func.isRequired,
+};

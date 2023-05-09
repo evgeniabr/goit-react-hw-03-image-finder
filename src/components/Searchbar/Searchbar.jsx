@@ -1,49 +1,50 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import PropTypes from 'prop-types';
+import css from './Searchbar.module.css';
 
 export class Searchbar extends Component {
   state = {
-    searchQuery: "",
-  }
+    searchQuery: '',
+  };
 
-    handleQueryChange = event => {
+  handleQueryChange = event => {
     this.setState({ searchQuery: event.currentTarget.value });
   };
 
- handleSubmit = event => {
+  handleSubmit = event => {
     event.preventDefault();
-    if (this.state.searchQuery.trim() === "") {
-      return alert('Insert correct request');
+    if (this.state.searchQuery.trim() === '') {
+      return toast.error('Insert correct request');
     }
     const { searchQuery } = this.state;
     this.props.onSubmit(searchQuery);
-    this.setState({ searchQuery: ""});
+    this.setState({ searchQuery: '' });
   };
 
   render() {
     const { searchQuery } = this.state;
     return (
-      <section className="Searchbar"> 
-      <header class="searchbar">
-  <form className="SearchForm" onSubmit={this.handleSubmit} >
-    <button type="submit" className="SearchForm-button">
-      <span className="SearchForm-button-label">Search</span>
-    </button>
+      <header className={css.Searchbar}>
+        <form className={css.SearchForm} onSubmit={this.handleSubmit}>
+          <button type="submit" className={css.SearchForm_button}>
+            <span className={css.SearchForm_button_label}>Search</span>
+          </button>
 
-    <input
-            className="SearchForm-input"
+          <input
+            className={css.SearchForm_input}
             name="searchQuery"
-            value = {searchQuery}
+            value={searchQuery}
             type="text"
             onChange={this.handleQueryChange}
-      autoComplete="off"
-      autoFocus
-      placeholder="Search images and photos"
-    />
-  </form>
-        </header>
-        </section>
-    )
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+          />
+        </form>
+        <Toaster />
+      </header>
+    );
   }
 }
 

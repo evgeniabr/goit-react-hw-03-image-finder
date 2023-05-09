@@ -1,21 +1,26 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
+import css from './ImageGalleryItem.module.css';
 
-export  function ImageGalleryItem({
+export function ImageGalleryItem({
   img: { webformatURL, tags, largeImageURL },
   toggleModal,
   setModalImg,
-})  {
+}) {
   return (
-    <li className="ImageGalleryItem">
-  <img className='ImageGalleryItem-image' src={webformatURL} alt={tags}  onClick={() => {
+    <li className={css.ImageGalleryItem}>
+      <img
+        className={css.ImageGalleryItem_image}
+        src={webformatURL}
+        alt={tags}
+        onClick={() => {
           toggleModal();
           setModalImg(largeImageURL);
-        }}/>
-</li>
-    
+        }}
+      />
+    </li>
   );
-};
+}
 
 ImageGalleryItem.propTypes = {
   img: PropTypes.object.isRequired,
